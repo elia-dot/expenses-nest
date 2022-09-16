@@ -49,8 +49,17 @@ export class UserService {
 
     const isAdmin = addingUser ? false : true;
 
+    let userName:string;
+
+    if (createUserDto.name) {
+      userName = createUserDto.name;
+    } else {
+      userName = createUserDto.email.split('@')[0];
+    }
+
     const newUser = new this.userModel({
       ...createUserDto,
+      name: userName,
       password: hashedPassword,
       isPasswordConfirm: addingUser === null,
       groupId,
