@@ -22,16 +22,14 @@ export class UserService {
     return this.userModel.find().exec();
   }
 
-  async findOne(phone: string): Promise<UserDocument | undefined> {
-    const user = await this.userModel.findOne({ phone }).select('+password');
+  async findOne(email: string): Promise<UserDocument | undefined> {
+    const user = await this.userModel.findOne({ email }).select('+password');
     return user;
   }
 
-  async create(
-    createUserDto: CreateUserDto,
-    addingUser: UserDocument | null,
-  ): Promise<UserDocument> {
-    const user = await this.userModel.findOne({ phone: createUserDto.phone });
+  async create(createUserDto: CreateUserDto, addingUser: UserDocument | null) {
+    let tempPassword: string;
+    const user = await this.userModel.findOne({ email: createUserDto.email });
     if (user) {
       return null;
     }
@@ -40,8 +38,7 @@ export class UserService {
     }
     let hashedPassword: string;
     if (addingUser) {
-      const tempPassword = generateRandomString(8);
-      console.log(tempPassword);
+      tempPassword = generateRandomString(8);
 
       hashedPassword = await this.hashPassword(tempPassword);
     } else {
@@ -59,7 +56,13 @@ export class UserService {
       groupId,
       isAdmin,
     });
-    return newUser.save();
+
+    await newUser.save();
+
+    if (addingUser) {
+      return { user: newUser, tempPassword };
+    }
+    return { user: newUser };
   }
 
   async findOneById(id: string): Promise<UserDocument | undefined> {

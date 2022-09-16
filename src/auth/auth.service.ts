@@ -15,10 +15,10 @@ export class AuthService {
   ) {}
 
   async validateUser(
-    phone: string,
+    email: string,
     pass: string,
   ): Promise<UserDocument | undefined> {
-    const user = await this.userService.findOne(phone);
+    const user = await this.userService.findOne(email);
     if (!user) {
       throw new HttpException('User not found', 404);
     }
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   async signup(createUserDto: CreateUserDto): Promise<any> {
-    const user = await this.userService.create(createUserDto, null);
+    const { user } = await this.userService.create(createUserDto, null);
     if (!user) {
       throw new HttpException('User already exists', 400);
     }
@@ -42,7 +42,7 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.validateUser(loginDto.phone, loginDto.password);
+    const user = await this.validateUser(loginDto.email, loginDto.password);
     if (!user) {
       throw new HttpException('Invalid credentials', 401);
     }

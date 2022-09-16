@@ -22,6 +22,9 @@ export class Expense {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   createdBy: UserDocument;
+
+  @Prop({ default: 1 })
+  installments: number;
 }
 
 export const ExpenseSchema = SchemaFactory.createForClass(Expense);
