@@ -24,13 +24,13 @@ export class ExpenseController {
       expenseDto,
       req.user,
     );
-    res.status(201).send({ expense });
+    res.status(201).json({ expense });
   }
 
   @Get()
   async getExpenses(@Res() res, @Req() req) {
     const expenses = await this.expenseService.getExpenses(req.user.groupId);
-    res.status(200).send({ expenses });
+    res.status(200).json({ expenses });
   }
 
   @Get('by-category')
@@ -38,13 +38,13 @@ export class ExpenseController {
     const sumByCategory = await this.expenseService.getExpensesByCategory(
       req.user.groupId,
     );
-    res.status(200).send(sumByCategory);
+    res.status(200).json(sumByCategory);
   }
 
   @Get('by-user')
   async getExpensesByUser(@Res() res, @Req() req) {
     const sumByUser = await this.expenseService.getExpensesByUser(req.user.groupId);
-    res.status(200).send(sumByUser);
+    res.status(200).json(sumByUser);
   }
 
   @Get('user/:id')
@@ -52,7 +52,7 @@ export class ExpenseController {
     const expenses = await this.expenseService.getExpensesByUserId(
       req.params.id,
     );
-    res.status(200).send({ expenses });
+    res.status(200).json({ expenses });
   }
 
   @Get('shop/:id')
@@ -61,18 +61,26 @@ export class ExpenseController {
       req.params.id,
       req.user.groupId,
     );
-    res.status(200).send({ expenses });
+    res.status(200).json({ expenses });
+  }
+
+  @Get('monthly')
+  async getMonthlyExpenses(@Res() res, @Req() req) {
+    const monthlyExpenses = await this.expenseService.getMonthlyExpenses(
+      req.user.groupId,
+    );
+    res.status(200).json(monthlyExpenses);
   }
 
   @Get(':id')
   async getExpense(@Res() res, @Req() req) {
     const expense = await this.expenseService.getExpense(req.params.id);
-    res.status(200).send({ expense });
+    res.status(200).json({ expense });
   }
 
   @Delete(':id')
   async deleteExpense(@Res() res, @Req() req) {
     const expense = await this.expenseService.deleteExpense(req.params.id);
-    res.status(200).send({ expense });
+    res.status(200).json({ expense });
   }
 }

@@ -76,4 +76,28 @@ export class ShopService {
     });
     return shopsByCategory;
   }
+
+  async searchShops(
+    groupId: string,
+    search: string,
+  ): Promise<ShopDocument[] | undefined> {
+    return this.shopModel
+      .find({
+        createdForGroupId: groupId,
+        name: { $regex: search },
+      })
+      .exec();
+  }
+
+  async searchCategories(
+    groupId: string,
+    search: string,
+  ): Promise<string[] | undefined> {
+    return this.shopModel
+      .distinct('category', {
+        createdForGroupId: groupId,
+        category: { $regex: search },
+      })
+      .exec();
+  }
 }

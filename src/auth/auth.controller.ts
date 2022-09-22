@@ -13,20 +13,20 @@ export class AuthController {
   async signup(@Res() res, @Req() req, @Body() createUserDto: CreateUserDto) {
     const user = await this.authService.signup(createUserDto);
     if (!user) {
-      return res.status(400).send({ message: 'User already exists' });
+      return res.status(400).json({ message: 'User already exists' });
     }
     req.user = user.user;
-    return res.status(201).send({ access_token: user.access_token });
+    return res.status(201).json({ access_token: user.access_token });
   }
 
   @Post('login')
   async login(@Res() res, @Req() req, @Body() loginDto: LoginDto) {
     const user = await this.authService.login(loginDto);
     if (!user) {
-      return res.status(401).send({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
     req.user = user.user;
-    return res.status(200).send({ access_token: user.access_token });
+    return res.status(200).json({ access_token: user.access_token });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -41,6 +41,6 @@ export class AuthController {
       updatePasswordDto.oldPassword,
       updatePasswordDto.newPassword,
     );
-    res.status(200).send({ user });
+    res.status(200).json({ user });
   }
 }

@@ -46,9 +46,11 @@ export class ExpenseService {
     const groupUsers = await this.userService.getUsersByGroupId(groupId);
     const groupUsersIds = groupUsers.map((user) => user._id);
     const expenses = await this.expenseModel
-      .find({ createdBy: { $in: groupUsersIds } })
+      .find({ createdBy: { $in: groupUsersIds }, date: { $lte: new Date() } })
       .populate('shop')
-      .populate('createdBy');
+      .populate('createdBy')
+      .sort({ date: 1 });
+
     return expenses;
   }
 
@@ -57,6 +59,7 @@ export class ExpenseService {
       .findById(id)
       .populate('shop')
       .populate('createdBy');
+
     return expense;
   }
 
@@ -86,12 +89,12 @@ export class ExpenseService {
 
   async getExpensesByCategory(groupId: string) {
     const allExpenses = await this.getExpenses(groupId);
-    const sumByCategory: { [key: string]: ExpenseDocument[] } = {};
+    const sumByCategory: { [key: string]: number } = {};
     allExpenses.forEach((expense) => {
       if (!sumByCategory[expense.shop.category]) {
-        sumByCategory[expense.shop.category] = [expense];
+        sumByCategory[expense.shop.category] = expense.amount;
       } else {
-        sumByCategory[expense.shop.category].push(expense);
+        sumByCategory[expense.shop.category] += expense.amount;
       }
     });
     return sumByCategory;
@@ -108,5 +111,28 @@ export class ExpenseService {
       }
     });
     return sumByUser;
+  }
+
+  async getMonthlyExpenses(groupId: string) {
+    const allExpenses = await this.getExpenses(groupId);
+    const sumByMonth: { [key: string]: { [key: string]: number } } = {};
+    allExpenses.forEach((expense) => {
+      const month = expense.date.getMonth() + 1;
+      const day = expense.date.getDate();
+      if (!sumByMonth[month]) {
+        sumByMonth[month] = {};
+      }
+      if (!sumByMonth[month][day]) {
+        sumByMonth[month][day] = expense.amount;
+      } else {
+        sumByMonth[month][day] += expense.amount;
+      }
+      if (!sumByMonth[month].total) {
+        sumByMonth[month].total = expense.amount;
+      } else {
+        sumByMonth[month].total += expense.amount;
+      }
+    });
+    return sumByMonth;
   }
 }
