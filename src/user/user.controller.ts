@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Req,
   Res,
@@ -11,6 +12,7 @@ import {
 
 import { CreateUserDto } from '../auth/dto/sign-up.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 
 @UseGuards(JwtAuthGuard)
@@ -35,6 +37,15 @@ export class UserController {
       return res.status(400).json({ message: 'User already exists' });
     }
     return res.status(201).json(user);
+  }
+
+  @Patch('update')
+  async update(@Res() res, @Req() req, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.userService.updateUser(req.user._id, updateUserDto);
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+    return res.status(200).json(user);
   }
 
   @Get('me')

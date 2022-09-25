@@ -5,4 +5,5 @@ export class UpdateUserDto {
     isPasswordConfirm: boolean;
     groupId: string;
     isAdmin: boolean;
+    monthlyBudget: number;
 }

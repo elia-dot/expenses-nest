@@ -49,7 +49,7 @@ export class UserService {
 
     const isAdmin = addingUser ? false : true;
 
-    let userName:string;
+    let userName: string;
 
     if (createUserDto.name) {
       userName = createUserDto.name;

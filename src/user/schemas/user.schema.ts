@@ -25,6 +25,9 @@ export class User {
 
   @Prop({ default: false })
   isPasswordConfirm: boolean;
+
+  @Prop({ default: 0 })
+  monthlyBudget: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

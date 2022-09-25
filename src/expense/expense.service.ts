@@ -117,8 +117,11 @@ export class ExpenseService {
     const allExpenses = await this.getExpenses(groupId);
     const sumByMonth: { [key: string]: { [key: string]: number } } = {};
     allExpenses.forEach((expense) => {
-      const month = expense.date.getMonth() + 1;
+      const month = `${
+        expense.date.getMonth() + 1
+      }-${expense.date.getFullYear()}`;
       const day = expense.date.getDate();
+
       if (!sumByMonth[month]) {
         sumByMonth[month] = {};
       }
