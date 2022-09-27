@@ -7,10 +7,14 @@ import { CreateUserDto } from '../auth/dto/sign-up.dto';
 import { UserDocument } from './schemas/user.schema';
 import { generateRandomString } from '../utils/generateRandomString';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('User') private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel('User') private userModel: Model<UserDocument>,
+    private mailService: MailService,
+  ) {}
 
   async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
@@ -67,6 +71,19 @@ export class UserService {
     });
 
     await newUser.save();
+
+    if (addingUser) {
+      await this.mailService.sendMail(
+        newUser.email,
+        'Expense Tracker',
+        './add-user',
+        {
+          name: newUser.name,
+          addingUser: addingUser.name,
+          password: tempPassword,
+        },
+      );
+    }
 
     if (addingUser) {
       return { user: newUser, tempPassword };

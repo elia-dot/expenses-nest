@@ -2,7 +2,10 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { UserDocument } from 'src/user/schemas/user.schema';
+import { UpdateUserDto } from '../user/dto/update-user.dto';
+import { generateRandomString } from '../utils/generateRandomString';
+import { MailService } from '../mail/mail.service';
+import { UserDocument } from '../user/schemas/user.schema';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from './dto/sign-up.dto';
@@ -12,6 +15,7 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   async validateUser(
@@ -30,11 +34,11 @@ export class AuthService {
   }
 
   async signup(createUserDto: CreateUserDto): Promise<any> {
-    const { user } = await this.userService.create(createUserDto, null);
+    const user = await this.userService.create(createUserDto, null);
     if (!user) {
       throw new HttpException('User already exists', 400);
     }
-    const payload = { user, sub: user.id };
+    const payload = { user, sub: user.user.id };
     return {
       user,
       access_token: this.jwtService.sign(payload),
@@ -53,20 +57,37 @@ export class AuthService {
     };
   }
 
+  async forgotPassword(email: string): Promise<any> {
+    const user = await this.userService.findOne(email);
+
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    const tmpPassword = generateRandomString(8);
+    try {
+      this.mailService.sendMail(email, 'שחזור סיסמא', 'forgot-password', {
+        name: user.name,
+        code: tmpPassword,
+      });
+      const hashedPassword = await this.userService.hashPassword(tmpPassword);
+      user.isPasswordConfirm = false;
+      user.password = hashedPassword;
+      await user.save();
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async updatePassword(
     user: UserDocument,
-    oldPassword: string,
     newPassword: string,
   ): Promise<UserDocument> {
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (isMatch) {
-      const hashedPassword = await this.userService.hashPassword(newPassword);
-      const updatedUser = await this.userService.updateUser(user._id, {
-        password: hashedPassword,
-        isPasswordConfirm: true,
-        ...user,
-      });
-      return updatedUser;
-    }
+    const hashedPassword = await this.userService.hashPassword(newPassword);
+    const updatedUser = await this.userService.updateUser(user._id, {
+      password: hashedPassword,
+      isPasswordConfirm: true,
+    } as UpdateUserDto);
+    return updatedUser;
   }
 }

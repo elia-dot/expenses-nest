@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { ShopModule } from './shop/shop.module';
 import { ExpenseModule } from './expense/expense.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ExpenseModule } from './expense/expense.module';
     AuthModule,
     ShopModule,
     ExpenseModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

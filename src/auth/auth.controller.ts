@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
@@ -38,9 +46,17 @@ export class AuthController {
   ) {
     const user = await this.authService.updatePassword(
       req.user,
-      updatePasswordDto.oldPassword,
       updatePasswordDto.newPassword,
     );
     res.status(200).json({ user });
+  }
+
+  @Post('forgot-password/:email')
+  async forgotPassword(@Res() res, @Param('email') email: string) {
+    const user = await this.authService.forgotPassword(email);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json({ message: 'Check your email' });
   }
 }
