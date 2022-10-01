@@ -65,7 +65,7 @@ export class UserService {
       ...createUserDto,
       name: userName,
       password: hashedPassword,
-      isPasswordConfirm: addingUser === null,
+      isPasswordConfirm: addingUser ? false : true,
       groupId,
       isAdmin,
     });

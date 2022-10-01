@@ -56,7 +56,7 @@ export class ExpenseService {
     if (sum > budget) {
       const tokens = await this.getGroupTokens(user.groupId);
       for (let token of tokens) {
-        await this.notificationService.sendNotification(
+        this.notificationService.sendNotification(
           'תקציב חודשי חריג',
           `חריגה מהתקציב החודשי שלך בסך ${sum - budget} ש"ח`,
           token,

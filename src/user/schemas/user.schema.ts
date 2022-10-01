@@ -23,7 +23,7 @@ export class User {
   @Prop({ required: true })
   groupId: string;
 
-  @Prop({ default: false })
+  @Prop({ default: true })
   isPasswordConfirm: boolean;
 
   @Prop({ default: 0 })
