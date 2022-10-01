@@ -12,7 +12,7 @@
     "start": "nest start",
     "start:dev": "export GOOGLE_APPLICATION_CREDENTIALS=/Users/mac/dev/expense-tracker/service-account.json && nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "export GOOGLE_APPLICATION_CREDENTIALS=./service-account.json && node dist/main",
+    "start:prod": "export GOOGLE_APPLICATION_CREDENTIALS=/Users/mac/dev/expense-tracker/service-account.json && node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
