@@ -5,11 +5,10 @@ export type ShopDocument = Shop & Document;
 
 @Schema()
 export class Shop {
-
   @Prop({ required: true })
   name: string;
 
-  @Prop({default: 'שונות'})
+  @Prop({ default: 'שונות' })
   category: string;
 
   @Prop()
@@ -17,6 +16,9 @@ export class Shop {
 
   @Prop({ default: false })
   isOnline: boolean;
+
+  @Prop()
+  imageUrl: string;
 }
 
 export const ShopSchema = SchemaFactory.createForClass(Shop);
