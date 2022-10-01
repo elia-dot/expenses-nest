@@ -52,7 +52,6 @@ export class ExpenseService {
 
     const sum =
       months[`${new Date().getMonth() + 1}-${new Date().getFullYear()}`].total;
-    console.log(sum, budget);
 
     if (sum > budget) {
       const tokens = await this.getGroupTokens(user.groupId);
