@@ -47,7 +47,6 @@ export class ExpenseService {
       createdBy: user._id,
     });
 
-    //if budget is exceeded, send notification
     const budget = user.monthlyBudget;
     const expenses = await this.getExpensesByUserId(user._id);
     const sum = expenses.reduce((acc, expense) => acc + expense.amount, 0);
