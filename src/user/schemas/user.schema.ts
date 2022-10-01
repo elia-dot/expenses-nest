@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import  { Document } from 'mongoose';
 
 export type UserDocument = User & Document;
 
@@ -28,6 +28,12 @@ export class User {
 
   @Prop({ default: 0 })
   monthlyBudget: number;
+
+  @Prop({ default: true })
+  allowNotifications: boolean;
+
+  @Prop()
+  pushNotificationsTokens: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

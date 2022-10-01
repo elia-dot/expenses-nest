@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { FirebaseModule, FirebaseService } from '@speakbox/nestjs-firebase-admin';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,6 +11,7 @@ import { PassportModule } from '@nestjs/passport';
 import { ShopModule } from './shop/shop.module';
 import { ExpenseModule } from './expense/expense.module';
 import { MailModule } from './mail/mail.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -26,8 +28,10 @@ import { MailModule } from './mail/mail.module';
     ShopModule,
     ExpenseModule,
     MailModule,
+    FirebaseModule,
+    NotificationModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, FirebaseService],
 })
 export class AppModule {}

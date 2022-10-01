@@ -7,6 +7,7 @@ import { ShopService } from '../shop/shop.service';
 import { ExpenseDto } from './dto/create-expense.dto';
 import { ExpenseDocument } from './schemas/expense.schema';
 import { UserService } from '../user/user.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class ExpenseService {
@@ -14,7 +15,16 @@ export class ExpenseService {
     @InjectModel('Expense') private expenseModel: Model<ExpenseDocument>,
     private shopService: ShopService,
     private userService: UserService,
+    private notificationService: NotificationService,
   ) {}
+
+  async getGroupTokens(groupId: string): Promise<string[]> {
+    const groupUsers = await this.userService.getUsersByGroupId(groupId);
+    const groupUsersTokens = groupUsers.map(
+      (user) => user.pushNotificationsTokens,
+    );
+    return groupUsersTokens.flat();
+  }
 
   async createExpense(
     expenseDto: ExpenseDto,
@@ -36,6 +46,21 @@ export class ExpenseService {
       shop: shop._id,
       createdBy: user._id,
     });
+
+    //if budget is exceeded, send notification
+    const budget = user.monthlyBudget;
+    const expenses = await this.getExpensesByUserId(user._id);
+    const sum = expenses.reduce((acc, expense) => acc + expense.amount, 0);
+    if (sum > budget) {
+      const tokens = await this.getGroupTokens(user.groupId);
+      for (let token of tokens) {
+        await this.notificationService.sendNotification(
+          'תקציב חודשי חריג',
+          `חריגה מהתקציב החודשי שלך בסך ${sum - budget} ש"ח`,
+          token,
+        );
+      }
+    }
 
     expense = await (await expense.populate('createdBy')).populate('shop');
 

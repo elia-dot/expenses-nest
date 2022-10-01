@@ -39,6 +39,15 @@ export class UserController {
     return res.status(201).json(user);
   }
 
+  @Post('update-push-token')
+  async updatePushToken(@Res() res, @Req() req, @Body('pushToken') pushToken: string) {
+    const user = await this.userService.updatePushNotificationsToken(
+      req.user._id,
+      pushToken,
+    );
+    return res.status(200).json(user);
+  }
+
   @Patch('update')
   async update(@Res() res, @Req() req, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.userService.updateUser(req.user._id, updateUserDto);

@@ -3,7 +3,9 @@ export class UpdateUserDto {
     email: string;
     password: string;
     isPasswordConfirm: boolean;
+    currentPassword: string;
     groupId: string;
     isAdmin: boolean;
     monthlyBudget: number;
+    allowNotifications: boolean;
 }

@@ -9,6 +9,7 @@ import { ExpenseController } from './expense.controller';
 import { ExpenseService } from './expense.service';
 import { ExpenseSchema } from './schemas/expense.schema';
 import { UserModule } from '../user/user.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserModule } from '../user/user.module';
     MongooseModule.forFeature([{ name: 'Shop', schema: ShopSchema }]),
     ShopModule,
     UserModule,
+    NotificationModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

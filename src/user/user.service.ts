@@ -103,6 +103,19 @@ export class UserService {
     userId: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserDocument> {
+    if (updateUserDto.password) {
+      const user = await this.userModel.findById(userId).select('+password');
+      console.log(user);
+      const isMatch = await bcrypt.compare(
+        updateUserDto.currentPassword,
+        user.password,
+      );
+      if (!isMatch) {
+        throw new HttpException('Password is incorrect', 400);
+      }
+      updateUserDto.password = await this.hashPassword(updateUserDto.password);
+    }
+
     const user = await this.userModel.findByIdAndUpdate(userId, updateUserDto, {
       new: true,
     });
@@ -111,5 +124,22 @@ export class UserService {
 
   async getUsersByGroupId(groupId: string): Promise<UserDocument[]> {
     return this.userModel.find({ groupId });
+  }
+
+  async updatePushNotificationsToken(
+    userId: string,
+    token: string,
+  ): Promise<UserDocument> {
+    const user = await this.userModel.findById(userId);
+
+    if (!user.pushNotificationsTokens) {
+      user.pushNotificationsTokens = [];
+    }
+
+    if (!user.pushNotificationsTokens.includes(token)) {
+      user.pushNotificationsTokens.push(token);
+    }
+    await user.save();
+    return user;
   }
 }
