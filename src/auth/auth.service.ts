@@ -34,11 +34,11 @@ export class AuthService {
   }
 
   async signup(createUserDto: CreateUserDto): Promise<any> {
-    const user = await this.userService.create(createUserDto, null);
+    const {user} = await this.userService.create(createUserDto, null);
     if (!user) {
       throw new HttpException('User already exists', 400);
     }
-    const payload = { user, sub: user.user.id };
+    const payload = { user, sub: user.id };
     return {
       user,
       access_token: this.jwtService.sign(payload),

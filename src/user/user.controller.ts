@@ -40,7 +40,11 @@ export class UserController {
   }
 
   @Post('update-push-token')
-  async updatePushToken(@Res() res, @Req() req, @Body('pushToken') pushToken: string) {
+  async updatePushToken(
+    @Res() res,
+    @Req() req,
+    @Body('pushToken') pushToken: string,
+  ) {
     const user = await this.userService.updatePushNotificationsToken(
       req.user._id,
       pushToken,
@@ -50,6 +54,8 @@ export class UserController {
 
   @Patch('update')
   async update(@Res() res, @Req() req, @Body() updateUserDto: UpdateUserDto) {
+    console.log(req.user);
+
     const user = await this.userService.updateUser(req.user._id, updateUserDto);
     if (!user) {
       return res.status(400).json({ message: 'User not found' });
