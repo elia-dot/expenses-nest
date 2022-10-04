@@ -51,9 +51,10 @@ export class ExpenseService {
     const months = await this.getMonthlyExpenses(user.groupId);
 
     const sum =
-      months[`${new Date().getMonth() + 1}-${new Date().getFullYear()}`].total;
+      months[`${new Date().getMonth() + 1}-${new Date().getFullYear()}`]
+        .total ?? expense.amount;
 
-    if (sum > budget) {
+    if (budget > 0 && sum > budget) {
       const tokens = await this.getGroupTokens(user.groupId);
       for (let token of tokens) {
         this.notificationService.sendNotification(
