@@ -142,4 +142,12 @@ export class UserService {
     await user.save();
     return user;
   }
+
+  async deleteUser(userId: string): Promise<string> {
+    const user = await this.userModel.findByIdAndDelete(userId);
+    if(!user) {
+      throw new HttpException('User not found', 404);
+    }
+    return 'User deleted';
+  }
 }

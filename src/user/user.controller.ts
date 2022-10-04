@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -81,5 +82,14 @@ export class UserController {
       return res.status(404).json({ message: 'User not found' });
     }
     return res.status(200).json(user);
+  }
+
+  @Delete(':id')
+  async deleteUser(@Res() res, @Param('id') id: string) {
+    const deleteMessage = await this.userService.deleteUser(id);
+    if (!deleteMessage) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json(deleteMessage);
   }
 }
