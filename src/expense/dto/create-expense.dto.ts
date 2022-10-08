@@ -8,4 +8,6 @@ export class ExpenseDto {
   shop: string;
 
   description: string;
+
+  installments: number;
 }

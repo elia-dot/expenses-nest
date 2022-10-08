@@ -41,11 +41,32 @@ export class ExpenseService {
         user.groupId,
       );
     }
-    let expense = await this.expenseModel.create({
-      ...expenseDto,
-      shop: shop._id,
-      createdBy: user._id,
-    });
+
+    let expense: ExpenseDocument;
+
+    expenseDto.installments = expenseDto.installments || 1;
+
+    for (let i = 0; i < expenseDto.installments; i++) {
+      const date = new Date();
+      date.setMonth(date.getMonth() + i);
+      if (i === 0) {
+        expense = await this.expenseModel.create({
+          ...expenseDto,
+          amount: parseFloat(expenseDto.amount) / expenseDto.installments,
+          shop: shop._id,
+          createdBy: user._id,
+          date,
+        });
+      } else {
+        await this.expenseModel.create({
+          ...expenseDto,
+          amount: parseFloat(expenseDto.amount) / expenseDto.installments,
+          shop: shop._id,
+          createdBy: user._id,
+          date,
+        });
+      }
+    }
 
     const budget = user.monthlyBudget;
     const months = await this.getMonthlyExpenses(user.groupId);
