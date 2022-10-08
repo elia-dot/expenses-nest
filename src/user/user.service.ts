@@ -116,6 +116,15 @@ export class UserService {
       updateUserDto.password = await this.hashPassword(updateUserDto.password);
     }
 
+    if (updateUserDto.monthlyBudget) {
+      const user = await this.userModel.findById(userId);
+      const groupUsers = await this.getUsersByGroupId(user.groupId);
+      for (const groupUser of groupUsers) {
+        groupUser.monthlyBudget = updateUserDto.monthlyBudget;
+        await groupUser.save();
+      }
+    }
+
     const user = await this.userModel.findByIdAndUpdate(userId, updateUserDto, {
       new: true,
     });
@@ -145,7 +154,7 @@ export class UserService {
 
   async deleteUser(userId: string): Promise<string> {
     const user = await this.userModel.findByIdAndDelete(userId);
-    if(!user) {
+    if (!user) {
       throw new HttpException('User not found', 404);
     }
     return 'User deleted';
