@@ -55,8 +55,6 @@ export class UserController {
 
   @Patch('update')
   async update(@Res() res, @Req() req, @Body() updateUserDto: UpdateUserDto) {
-    console.log(req.user);
-
     const user = await this.userService.updateUser(req.user._id, updateUserDto);
     if (!user) {
       return res.status(400).json({ message: 'User not found' });

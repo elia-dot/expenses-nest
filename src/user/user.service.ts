@@ -105,7 +105,6 @@ export class UserService {
   ): Promise<UserDocument> {
     if (updateUserDto.password) {
       const user = await this.userModel.findById(userId).select('+password');
-      console.log(user);
       const isMatch = await bcrypt.compare(
         updateUserDto.currentPassword,
         user.password,
